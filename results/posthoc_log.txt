@@ -1,0 +1,5 @@
+POSTHOC G2 outcomes {"on":{"need":272,"other":68,"none":54},"off":{"need":194,"other":194,"none":6}}
+POSTHOC G2 gate-on correct by distance to needed resource (<=12 / >12 steps) {"near":[248,268],"far":[24,126]}
+POSTHOC horizon gamma=0.9 explore=3000: G2-style correct 69.0% (near 92.5%, far 19.0%); map from (2,10) to food: 150 150 150 150 119 150 149 104 150 64 steps (shortest 24)
+POSTHOC horizon gamma=0.99 explore=3000: G2-style correct 69.0% (near 91.4%, far 21.4%); map from (2,10) to food: 150 150 150 150 150 150 149 104 150 64 steps (shortest 24)
+POSTHOC horizon gamma=0.99 explore=6000: G2-style correct 89.7% (near 95.1%, far 76.5%); map from (2,10) to food: 150 26 144 150 29 116 75 90 26 38 steps (shortest 24)

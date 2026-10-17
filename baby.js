@@ -268,7 +268,8 @@ export class Baby {
       if (nav) {
         const [dx, dy] = this.grid.displacement(this.goalPhase[kind]);
         a = Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0);
-        if ((dx === 0 && dy === 0) || this.T[s * 4 + a] === s) { nav = false; a = this.greedy(V, s); }
+        // PREREG rule: head along the vector until a move actually fails (not on remembered walls)
+        if (dx === 0 && dy === 0) { nav = false; a = this.greedy(V, s); }
       } else a = this.greedy(learn ? this.valueField() : V, s);
       const s2 = this.act(world, s, a, learn);
       if (nav && s2 === s) nav = false;        // vector heading blocked: follow the map from now on

@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>ClaudesBaby</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a vivarium bench. The live world leads, its organs read out beside it, the test ledger below. */
+:root {
+  --bg: #edf0ea; --panel: #fbfcf9; --ink: #1b241e; --muted: #5d6a61; --line: #d3dacf; --well: #e2e7de;
+  --accent: #0f6c78; --hunger: #b46d12; --thirst: #2c63c4; --dopa: #b52a7e; --wall: #2a332d;
+  --pass: #1d7448; --fail: #b02a22;
+  --display: "Familjen Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #101511; --panel: #171e19; --ink: #e3e9e3; --muted: #97a59b; --line: #2b352e; --well: #0c100d;
+  --accent: #4fc0cc; --hunger: #e2a24a; --thirst: #79a6f5; --dopa: #f06bb9; --wall: #4a574e;
+  --pass: #63d29a; --fail: #ff8a80; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #101511; --panel: #171e19; --ink: #e3e9e3; --muted: #97a59b; --line: #2b352e; --well: #0c100d;
+  --accent: #4fc0cc; --hunger: #e2a24a; --thirst: #79a6f5; --dopa: #f06bb9; --wall: #4a574e;
+  --pass: #63d29a; --fail: #ff8a80; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--body); }
+.wrap { max-width: 1100px; margin: 0 auto; padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(2.1rem, 5vw, 3.2rem); line-height: 1.02; letter-spacing: -0.02em; }
+h2 { font-size: 1.4rem; }
+h3 { font-size: 0.95rem; font-weight: 500; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--muted); font-size: 1.06rem; }
+.label { font: 600 0.7rem var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+header { display: grid; gap: 12px; }
+section { display: grid; gap: 14px; margin-top: 40px; }
+.bench { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 18px; margin-top: 24px; }
+@media (max-width: 820px) { .bench { grid-template-columns: 1fr; } }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 14px; min-width: 0; }
+#world { width: 100%; aspect-ratio: 1; max-width: 100%; display: block; border-radius: 6px; background: var(--well); touch-action: manipulation; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button { font: 600 0.88rem var(--body); border-radius: 8px; padding: 7px 12px; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--ink); }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); }
+button[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+select, input[type=range] { accent-color: var(--accent); }
+select { font: 0.88rem var(--body); padding: 6px 8px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+.meter { display: grid; grid-template-columns: 76px 1fr 44px; gap: 8px; align-items: center; font-size: 0.86rem; }
+.bar { height: 10px; background: var(--well); border-radius: 99px; overflow: hidden; }
+.bar > i { display: block; height: 100%; width: 0; border-radius: 99px; }
+.num { font-family: var(--mono); font-size: 0.8rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+.organs { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.organ { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+.organ canvas { width: 100%; max-width: 100%; display: block; }
+.organ .num { font-size: 0.74rem; }
+.status { font: 0.82rem var(--mono); color: var(--muted); min-height: 1.3em; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 600 0.7rem var(--mono); text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+td.m { font-family: var(--mono); font-size: 0.84rem; }
+.pill { font: 600 0.7rem var(--mono); padding: 2px 8px; border-radius: 99px; border: 1px solid currentColor; white-space: nowrap; }
+.pill.pass { color: var(--pass); } .pill.fail { color: var(--fail); } .pill.note { color: var(--muted); }
+code { font-family: var(--mono); font-size: 0.86em; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="label">anttiluode / ClaudesBaby</span>
+    <h1>A creature made of operators</h1>
+    <p class="lede">Each brain region is one switchable part with its own matrix: a map of what follows what, a dopamine-trained reward map per need, drives that gate the readout, a theta clock that separates writing from reading, and grid rings whose weights are generated from two "genes" instead of stored. It explores, gets hungry and thirsty, and finds its way. Open a door it has never walked through and watch what each part does.</p>
+  </header>
+
+  <div class="bench">
+    <div class="card">
+      <canvas id="world" width="520" height="520" aria-label="The two-room world with the creature, water, food and three doors"></canvas>
+      <div class="row">
+        <button class="primary" id="run">Pause</button>
+        <label class="row num" for="speed">speed <input id="speed" type="range" min="1" max="30" value="4"></label>
+        <label class="row num" for="overlay">show
+          <select id="overlay"><option value="value">value field (cortex readout)</option><option value="map">successor map from here</option><option value="none">nothing</option></select>
+        </label>
+      </div>
+      <div class="row">
+        <span class="label">doors</span>
+        <button id="doorA" aria-pressed="true">A open</button>
+        <button id="doorB" aria-pressed="false">B closed</button>
+        <button id="doorC" aria-pressed="false">C closed</button>
+        <button id="reset">New creature</button>
+      </div>
+      <div class="status" id="status">Starting…</div>
+    </div>
+
+    <div class="card">
+      <div class="row"><span class="label">parts (click to switch off)</span></div>
+      <div class="row">
+        <button id="pSeptum" aria-pressed="true">medial septum</button>
+        <button id="pGate" aria-pressed="true">hypothalamic gate</button>
+        <button id="pGrid" aria-pressed="true">entorhinal grid</button>
+      </div>
+      <div class="meter"><span>hunger</span><div class="bar"><i id="mHunger" style="background:var(--hunger)"></i></div><span class="num" id="vHunger">0.00</span></div>
+      <div class="meter"><span>thirst</span><div class="bar"><i id="mThirst" style="background:var(--thirst)"></i></div><span class="num" id="vThirst">0.00</span></div>
+      <div class="meter"><span>dopamine δ</span><div class="bar"><i id="mDopa" style="background:var(--dopa)"></i></div><span class="num" id="vDopa">0.00</span></div>
+      <div class="row">
+        <button id="feedH">Make it hungry</button>
+        <button id="feedT">Make it thirsty</button>
+      </div>
+      <div class="organs">
+        <div class="organ"><span class="label">septum · theta</span><canvas id="theta" width="150" height="90"></canvas><span class="num" id="thetaTxt">encode</span></div>
+        <div class="organ"><span class="label">entorhinal · 6 rings</span><canvas id="rings" width="300" height="200"></canvas><span class="num" id="gridTxt">periods 3, 5, 7 cells · x and y</span></div>
+      </div>
+      <p class="num" id="modeTxt"></p>
+    </div>
+  </div>
+
+  <section>
+    <h2>The parts</h2>
+    <div class="tablewrap"><table>
+      <tr><th>timescale</th><th>region</th><th>its matrix in the creature</th></tr>
+      <tr><td>lifetime</td><td>entorhinal grid (DNA)</td><td>W(v) = X R(ωv) Xᵀ. Each of 16 neurons per ring carries two gene features (cos θ, sin θ); a 2×2 rule matrix, rotated by running speed, generates every connection. Never stored entry by entry. Path integration is exact.</td></tr>
+      <tr><td>minutes–days</td><td>hippocampus</td><td>successor map M (169×169): how much each place is expected to be visited after this one. Learned by TD from every step.</td></tr>
+      <tr><td>~100 ms</td><td>medial septum</td><td>theta cycle per step: encoding phase writes what happened, retrieval phase reads the map. Switched off, the read-out is also written back as if experienced.</td></tr>
+      <tr><td>minutes</td><td>striatum</td><td>one reward map per need, changed only by a dopamine prediction error δ = reward − expectation at the place visited.</td></tr>
+      <tr><td>seconds–hours</td><td>hypothalamus</td><td>hunger and thirst become mixing weights mₖ.</td></tr>
+      <tr><td>milliseconds</td><td>cortex (L5)</td><td>V(s) = Σₖ mₖ (M rₖ)(s): the map's value per need (basal) multiplied by the drive gate (apical).</td></tr>
+      <tr><td>days–months</td><td>lipids, myelin</td><td>not modelled. They would set time constants and conduction delays, and the 2026 lipid atlas has no functional data to constrain them.</td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Pre-registered tests</h2>
+    <p>Gates and thresholds were committed in PREREG.md before any code ran. 10 seeds each. These show each part doing the job attributed to its region, in a model built to have those parts; they do not show the brain works this way.</p>
+    <div class="tablewrap"><table id="gates"></table></div>
+  </section>
+
+  <section>
+    <h2>What the tests found</h2>
+    <div style="display:grid;gap:10px">
+      <p><b>The map works up close and fades with distance.</b> After exploring without any reward and tasting food once, the creature walks to it at 1.14× the shortest path, while model-free learning on the same experience wanders (8.3×). But the map's value gradient fades past about 12 steps: the need gate picks the right resource 92.5% of the time when it is near and 19% when it is far.</p>
+      <p><b>The grid gives what the map can't.</b> Door C opens in a wall the creature only ever bumped into. With grid rings it walks straight through, at the shortest path, on the first try. The map alone cannot, because it has never experienced that passage.</p>
+      <p><b>The theta separation did nothing measurable here.</b> Writing the retrieved read-out back into the map lowered its accuracy by under 0.02 correlation, and behaviour after a door change was the same. That pre-registered kill condition fired: as modelled, the septum is decoration.</p>
+      <p><b>The next part this points to is replay.</b> After the tests (not pre-registered): a longer horizon alone did not help (69%). Twice the exploration did (89.7%, far targets 76.5%). The long-range map has to propagate through experience, which is what hippocampal replay does offline during rest.</p>
+    </div>
+  </section>
+</div>
+
+<script type="module">
+import { Baby, makeWorld, setDoor, move, freeCells, ACTIONS, DOORS, W, H, N, idx, xy, mulberry32 } from "./baby.js";
+
+const $ = (id) => document.getElementById(id);
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let world, baby, s, running = true, rng, heading = 1, goal = null, nav = false, goalSteps = 0, cooldown = 0, trail = [];
+const RATE = { food: 0.0016, water: 0.0024 };
+
+function fresh() {
+  world = makeWorld({ A: $("doorA").getAttribute("aria-pressed") === "true", B: $("doorB").getAttribute("aria-pressed") === "true", C: $("doorC").getAttribute("aria-pressed") === "true" });
+  const seed = (Math.random() * 2 ** 31) | 0;
+  rng = mulberry32(seed);
+  baby = new Baby({ seed, septum: on("pSeptum"), gate: on("pGate"), grid: on("pGrid") });
+  const f = freeCells(world).filter((c) => c !== world.food && c !== world.water);
+  s = f[Math.floor(rng() * f.length)];
+  baby.grid.anchor(s);
+  baby.drives = { food: 0.05, water: 0.1 };
+  goal = null; nav = false; trail = [];
+}
+const on = (id) => $(id).getAttribute("aria-pressed") === "true";
+const known = (k) => baby.r[k].some((v) => v > 0);
+
+function tick() {
+  baby.drives.food = Math.min(1, baby.drives.food + RATE.food);
+  baby.drives.water = Math.min(1, baby.drives.water + RATE.water);
+  const need = baby.drives.food >= baby.drives.water ? "food" : "water";
+  if (cooldown > 0) cooldown--;
+  if (!goal && cooldown === 0 && baby.drives[need] > 0.55 && known(need)) {
+    goal = need; nav = baby.gridNav && baby.goalPhase[need] !== null; goalSteps = 0;
+  }
+  let a;
+  if (goal) {
+    goalSteps++;
+    if (nav) {
+      const [dx, dy] = baby.grid.displacement(baby.goalPhase[goal]);
+      a = Math.abs(dx) >= Math.abs(dy) ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0);
+      if (dx === 0 && dy === 0) nav = false;
+    }
+    if (!nav) a = baby.greedy(baby.valueField(), s);
+    if (goalSteps > 160) { goal = null; cooldown = 60; }
+  } else {
+    if (rng() < 0.3) heading = Math.floor(rng() * 4);
+    a = heading;
+  }
+  const s2 = baby.act(world, s, a, true);
+  if (s2 === s) { if (goal && nav) nav = false; if (!goal) heading = Math.floor(rng() * 4); }
+  s = s2;
+  trail.push(s); if (trail.length > 40) trail.shift();
+  for (const k of ["food", "water"]) {
+    const cell = k === "food" ? world.food : world.water;
+    if (s === cell) {
+      baby.taste(cell, k, 1);
+      baby.drives[k] = 0;
+      if (goal === k) { goal = null; cooldown = 20; }
+    }
+  }
+}
+
+function drawWorld() {
+  const c = $("world"), g = c.getContext("2d"), cs = c.width / W;
+  g.clearRect(0, 0, c.width, c.height);
+  const mode = $("overlay").value;
+  let field = null;
+  if (mode === "value") field = baby.valueField();
+  if (mode === "map") field = baby.M.slice(s * N, s * N + N);
+  let mx = 1e-9;
+  if (field) for (let k = 0; k < N; k++) if (!world.wall[k] && k !== s) mx = Math.max(mx, field[k]);
+  const acc = css("--accent");
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const k = idx(x, y);
+    if (world.wall[k]) { g.fillStyle = css("--wall"); g.fillRect(x * cs, y * cs, cs, cs); continue; }
+    if (field) { g.globalAlpha = Math.max(0, Math.min(1, field[k] / mx)) * 0.75; g.fillStyle = acc; g.fillRect(x * cs, y * cs, cs, cs); g.globalAlpha = 1; }
+  }
+  g.strokeStyle = css("--line"); g.lineWidth = 1;
+  for (let i = 0; i <= W; i++) { g.beginPath(); g.moveTo(i * cs, 0); g.lineTo(i * cs, c.height); g.stroke(); g.beginPath(); g.moveTo(0, i * cs); g.lineTo(c.width, i * cs); g.stroke(); }
+  g.font = `600 ${cs * 0.42}px ${css("--mono").split(",")[0]}`; g.textAlign = "center"; g.textBaseline = "middle";
+  for (const [name, [x, y]] of Object.entries(DOORS)) {
+    g.strokeStyle = world.open[name] ? acc : css("--muted"); g.lineWidth = 3;
+    g.strokeRect(x * cs + 3, y * cs + 3, cs - 6, cs - 6);
+    g.fillStyle = world.open[name] ? css("--ink") : css("--panel"); g.fillText(name, x * cs + cs / 2, y * cs + cs / 2);
+  }
+  const dot = (cell, col, r) => { const [x, y] = xy(cell); g.fillStyle = col; g.beginPath(); g.arc(x * cs + cs / 2, y * cs + cs / 2, r, 0, 2 * Math.PI); g.fill(); };
+  dot(world.water, css("--thirst"), cs * 0.32); dot(world.food, css("--hunger"), cs * 0.32);
+  g.fillStyle = css("--panel"); g.fillText("W", ...xy(world.water).map((v) => v * cs + cs / 2)); g.fillText("F", ...xy(world.food).map((v) => v * cs + cs / 2));
+  trail.forEach((c2, i) => { g.globalAlpha = (i + 1) / trail.length * 0.35; dot(c2, css("--ink"), cs * 0.12); });
+  g.globalAlpha = 1;
+  dot(s, css("--ink"), cs * 0.3); dot(s, css("--panel"), cs * 0.14);
+}
+
+function drawOrgans() {
+  const t = $("theta"), g = t.getContext("2d");
+  g.clearRect(0, 0, t.width, t.height);
+  const cx = 45, cy = 45, R = 32;
+  g.strokeStyle = css("--line"); g.lineWidth = 6; g.beginPath(); g.arc(cx, cy, R, 0, 2 * Math.PI); g.stroke();
+  g.strokeStyle = baby.theta === 0 ? css("--accent") : css("--dopa");
+  g.beginPath(); g.arc(cx, cy, R, baby.theta === 0 ? -Math.PI / 2 : Math.PI / 2, baby.theta === 0 ? Math.PI / 2 : 3 * Math.PI / 2); g.stroke();
+  g.fillStyle = css("--ink"); g.font = `600 12px ${css("--mono").split(",")[0]}`; g.textAlign = "left"; g.textBaseline = "middle";
+  g.fillText("write", 90, 32); g.fillText("read", 90, 58);
+  g.fillStyle = baby.theta === 0 ? css("--accent") : css("--muted"); g.fillRect(84, 29, 4, 6);
+  g.fillStyle = baby.theta === 1 ? css("--dopa") : css("--muted"); g.fillRect(84, 55, 4, 6);
+  $("thetaTxt").textContent = baby.septum ? "write and read separated" : "septum off: read-out is written back";
+
+  const rc = $("rings"), h = rc.getContext("2d");
+  h.clearRect(0, 0, rc.width, rc.height);
+  const rings = [...baby.grid.rx, ...baby.grid.ry];
+  rings.forEach((ring, k) => {
+    const col = k % 3, row = Math.floor(k / 3), x0 = 50 + col * 100, y0 = 50 + row * 100;
+    const mx = Math.max(...ring.r) || 1;
+    for (let i = 0; i < ring.n; i++) {
+      const a = 2 * Math.PI * i / ring.n, v = ring.r[i] / mx;
+      h.fillStyle = v > 0.02 ? css("--accent") : css("--line");
+      h.globalAlpha = 0.25 + 0.75 * v;
+      h.beginPath(); h.arc(x0 + 30 * Math.cos(a), y0 + 30 * Math.sin(a), 3 + 5 * v, 0, 2 * Math.PI); h.fill();
+    }
+    h.globalAlpha = 1; h.fillStyle = css("--muted"); h.font = `11px ${css("--mono").split(",")[0]}`; h.textAlign = "center";
+    h.fillText(`${row ? "y" : "x"} · ${ring.period}`, x0, y0 + 4);
+  });
+
+  const set = (bar, txt, v) => { $(bar).style.width = `${Math.round(100 * Math.min(1, Math.abs(v)))}%`; $(txt).textContent = v.toFixed(2); };
+  set("mHunger", "vHunger", baby.drives.food); set("mThirst", "vThirst", baby.drives.water);
+  set("mDopa", "vDopa", baby.lastDelta);
+  baby.lastDelta *= 0.96;
+  const m = baby.mix();
+  $("modeTxt").textContent = goal
+    ? `seeking ${goal}${nav ? " by grid vector" : " by the map"} · gate weights food ${m.food.toFixed(2)}, water ${m.water.toFixed(2)}`
+    : `exploring · gate weights food ${m.food.toFixed(2)}, water ${m.water.toFixed(2)}`;
+  $("status").textContent = `knows food: ${known("food") ? "yes" : "not yet"} · knows water: ${known("water") ? "yes" : "not yet"}`;
+}
+
+function frame() {
+  if (running) for (let i = 0; i < +$("speed").value; i++) tick();
+  drawWorld(); drawOrgans();
+  requestAnimationFrame(frame);
+}
+
+function toggle(id, onTxt, offTxt, fn) {
+  const b = $(id);
+  b.onclick = () => { const v = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", String(v)); if (onTxt) b.textContent = v ? onTxt : offTxt; fn(v); };
+}
+for (const d of ["A", "B", "C"]) toggle(`door${d}`, `${d} open`, `${d} closed`, (v) => { setDoor(world, d, v); if (world.wall[s]) s = move(world, s, 3) === s ? s : move(world, s, 3); });
+toggle("pSeptum", null, null, (v) => { baby.septum = v; });
+toggle("pGate", null, null, (v) => { baby.gate = v; });
+toggle("pGrid", null, null, (v) => { baby.gridNav = v; nav = false; });
+$("run").onclick = () => { running = !running; $("run").textContent = running ? "Pause" : "Run"; };
+$("reset").onclick = fresh;
+$("feedH").onclick = () => { baby.drives.food = 1; };
+$("feedT").onclick = () => { baby.drives.water = 1; };
+
+async function results() {
+  try {
+    const R = await (await fetch("results/results.json")).json();
+    const pill = (ok, note) => note ? `<span class="pill note">${note}</span>` : `<span class="pill ${ok ? "pass" : "fail"}">${ok ? "PASS" : "FAIL"}</span>`;
+    const f = (v, d = 2) => Number(v).toFixed(d), pc = (v) => (100 * v).toFixed(1) + "%";
+    $("gates").innerHTML = `<tr><th>gate</th><th>part</th><th>measured</th><th>pass if</th><th></th></tr>
+    <tr><td class="m">G1</td><td>hippocampus</td><td class="m">map ${f(R.G1.sr_median_ratio)}× · model-free ${f(R.G1.q_median_ratio)}×</td><td>map ≤ 1.5×, model-free ≥ 3× the shortest path</td><td>${pill(R.G1.pass)}</td></tr>
+    <tr><td class="m">G2</td><td>hypothalamus + cortex gate</td><td class="m">gate on ${pc(R.G2.gate_on_correct)} · off ${pc(R.G2.gate_off_correct)}</td><td>on ≥ 90%, off ≤ 70%</td><td>${pill(R.G2.pass)}</td></tr>
+    <tr><td class="m">G3</td><td>medial septum</td><td class="m">map accuracy on ${f(R.G3.mean_on, 3)} · off ${f(R.G3.mean_off, 3)} · wins ${R.G3.wins}/10</td><td>on ≥ off + 0.05 in 8/10 seeds</td><td>${pill(R.G3.pass)}</td></tr>
+    <tr><td class="m">G4</td><td>entorhinal grid</td><td class="m">grid ${f(R.G4.grid_median_ratio)}× · map alone ${f(R.G4.map_median_ratio)}×</td><td>grid ≤ 1.3×, map ≥ 1.3× the new shortest path</td><td>${pill(R.G4.pass)}</td></tr>
+    <tr><td class="m">G4b</td><td>grid cost, no shortcut</td><td class="m">grid / map ${f(R.G4b.median_grid_over_map)}</td><td>≤ 1.3</td><td>${pill(R.G4b.pass, "pass, vacuous: both hit the cap in 7/10")}</td></tr>`;
+  } catch (e) { $("gates").innerHTML = `<tr><td>results/results.json not found next to this page.</td></tr>`; }
+}
+
+fresh(); results(); frame();
+</script>
+</html>

@@ -1,0 +1,19 @@
+=== gates 2026-10-17T13:22:23.445Z
+G1 latent learning: median steps/shortest  map 1.14  model-free Q 8.33  -> PASS
+G2 need switch: correct resource first  gate on 69.0%  gate off 49.2%  -> FAIL
+G3 theta: map correlation after the change  septum on 0.906  off 0.889  (before the change: 0.896 / 0.878)  wins 0/10 -> FAIL
+G3b steps per trial after the change, septum on:  116 76 83 65 86 77 67 53 68 54
+G3b steps per trial after the change, septum off: 116 76 83 65 86 77 67 53 54 45
+G4 shortcut through door C: steps/new shortest  grid+map 1.94  map alone 18.75  -> FAIL
+G4b no shortcut: grid+map steps / map steps (median) 1.00  -> PASS
+done
+--- correction: grid navigation now stops only when a move actually fails, as PREREG.md states (the first run also stopped on remembered walls). Rerun of all gates follows. ---
+=== gates 2026-10-17T13:23:07.102Z
+G1 latent learning: median steps/shortest  map 1.14  model-free Q 8.33  -> PASS
+G2 need switch: correct resource first  gate on 69.0%  gate off 49.2%  -> FAIL
+G3 theta: map correlation after the change  septum on 0.906  off 0.889  (before the change: 0.896 / 0.878)  wins 0/10 -> FAIL
+G3b steps per trial after the change, septum on:  116 76 83 65 86 77 67 53 68 54
+G3b steps per trial after the change, septum off: 116 76 83 65 86 77 67 53 54 45
+G4 shortcut through door C: steps/new shortest  grid+map 1.00  map alone 18.75  -> PASS
+G4b no shortcut: grid+map steps / map steps (median) 1.00  -> PASS
+done
